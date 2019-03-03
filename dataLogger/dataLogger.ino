@@ -180,9 +180,27 @@ void setup()
     Log.close();
   }
 
+  char *csvHeaders[] = {"Time Since On (ms)",
+    "Euler (deg) - X","Euler (deg) - Y","Euler (deg) - Z", 
+    "Quaterion - qW","Quaterion - qX","Quaterion - qY","Quaterion - qZ",
+    "Accel (m/s^2) - X","Accel (m/s^2) - Y","Accel (m/s^2) - Z",
+    "Mag (uT) - X","Mag (uT) - Y", "Mag (uT) - Z",
+    "Gravity (m/s^2) - X","Gravity (m/s^2) - Y","Gravity (m/s^2) - Z",
+    "Lin. Accel (m/s^2) - X","Lin. Accel (m/s^2) - Y","Lin. Accel (m/s^2) - Z",
+    "Gyro (rad/s) - X","Gyro (rad/s) - Y","Gyro (rad/s) - Z",
+    "BNO Temp (*C)", "SF Accel1D (g)", "Press. (Pa)", "Altitude (m)", "Humidity (%)", "BME Temp (*C)",
+    "Time Since startTime loop (ms)"
+  };
+  
   File DataLabel = SD.open("MegaSensors.csv", FILE_WRITE);
   if (DataLabel) {
+    DataLabel.println("");
     DataLabel.println("New Record");
+    int arraySize = sizeof(csvHeaders) / sizeof(csvHeaders[0]);
+    for (int i=0; i< arraySize; i++){
+      DataLabel.print(csvHeaders[i]);
+      DataLabel.print(",");
+    }
     DataLabel.close();
   }
 
@@ -280,7 +298,8 @@ void loop()
   {
 
     //Time Since Turned On (ms)   
-    outputToSD(millis());
+    unsigned long startTime = millis();
+    outputToSD(startTime);
 
     /* Get a new sensor event */
     sensors_event_t event;
@@ -296,8 +315,8 @@ void loop()
     //Quaternion
     imu::Quaternion quat = bno.getQuat();
     outputToSD(quat.w());
-    outputToSD(quat.y());
     outputToSD(quat.x());
+    outputToSD(quat.y());
     outputToSD(quat.z());
 
     //Accelerometer (m/s^2)
@@ -334,7 +353,7 @@ void loop()
     int8_t bno_temp = bno.getTemp();
     outputToSD(bno_temp);
 
-    //Sf Acceleration
+    //Sf Acceleration - Acceleration in 1-axis (g)
     sf_Acceleration();
 
     
@@ -356,8 +375,8 @@ void loop()
 //    dsb_Temperature();
 
 
-    //Time Since Turned On (ms)
-    outputToSD(millis());
+    //Time Since startTime Command  (ms)
+    outputToSD(millis()-startTime);
 
 //  tee.println();
     myFile.flush();
