@@ -93,12 +93,13 @@ void CCS()
 {
   //Check to see if data is ready with .dataAvailable()
   myCCS811.readAlgorithmResults();
-  //Returns calculated CO2 reading
+  //https://learn.sparkfun.com/tutorials/ccs811-air-quality-breakout-hookup-guide#arduino-library-and-usage 
+  //Returns calculated CO2 reading in parts per million (ppm)
   outputToSD(myCCS811.getCO2());
-  //Returns calculated TVOC reading
+  //Returns calculated Total Voltatile Organic Compounds (TVOC) reading in parts per billion (ppb)
   outputToSD(myCCS811.getTVOC());
 //  //CCS Temperature (*C)
-//  outputToSD(myCCS811.getTemperature());
+  outputToSD(myCCS811.getTemperature());
 //  //CCS Resistance (Ohm)
 //  outputToSD(myCCS811.getResistance());
   float BMEhumid = myBME280.readFloatHumidity();
@@ -188,7 +189,10 @@ void setup()
     "Gravity (m/s^2) - X","Gravity (m/s^2) - Y","Gravity (m/s^2) - Z",
     "Lin. Accel (m/s^2) - X","Lin. Accel (m/s^2) - Y","Lin. Accel (m/s^2) - Z",
     "Gyro (rad/s) - X","Gyro (rad/s) - Y","Gyro (rad/s) - Z",
-    "BNO Temp (*C)", "SF Accel1D (g)", "Press. (Pa)", "Altitude (m)", "Humidity (%)", "BME Temp (*C)",
+    "BNO Temp (*C)", 
+    "SF Accel1D (g)", 
+    "CCS CO2 (ppm)", "CCS TVOC (ppb)", "CCS Temp (*C)",
+    "Press. (Pa)", "Altitude (m)", "Humidity (%)", "BME Temp (*C)",
     "Time Since startTime loop (ms)"
   };
   
@@ -353,9 +357,11 @@ void loop()
     int8_t bno_temp = bno.getTemp();
     outputToSD(bno_temp);
 
-    //Sf Acceleration - Acceleration in 1-axis (g)
+    //Sf Acceleration - Stores Acceleration in 1-axis (g)
     sf_Acceleration();
 
+    //CSS811 Sensor - Stores 
+    CCS();
     
     /* Sparkfun BME280 and CCS811 */
     //Pressure (Pa)
